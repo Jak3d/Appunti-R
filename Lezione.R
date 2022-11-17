@@ -249,7 +249,7 @@ cor(pesom, pesob, method = "kendall")
 #DEFINIZIONE: Stima: si dice STIMATORE detto anche statistica (con la s minuscola), una funzione calcolabile in base al campione casuale # nolint
                     #casuale(x_1,x_2,....,x_n) v.a i.i.d Esempio: "media campionaria" e "varianza campionaria corretta" sono stimatori # nolint
                     #campioni = insieme variabili i.i.d.
-#___________________________________________________________NUOVA LEZIONE 5_______________________________________________________________  # noint
+#___________________________________________________________NUOVA LEZIONE 5_______________________________________________________________  # nolint
 #Stimatori e stime
 #Introduzione agli intervalli di confindenza
 
@@ -269,7 +269,7 @@ cor(pesom, pesob, method = "kendall")
         #-Legge dei grandi numeri
     #Legge dei grandi numeri:
         #dati x_1,...,x_n indipendenti identicamente distinte con media E(X_1)<inf: # nolint
-            #Media di X_n = 1/n * sum di i da 1 a n di X_i con n -> inf E(X_1) 
+            #Media di X_n = 1/n * sum di i da 1 a n di X_i con n -> inf E(X_1)
     #E(media X_n) = E( 1/n * sum di i da 1 ad n di X_i)
                 # = 1/n * E(sum di i da 1 ad n di X-i) = 1/n * sum di i da 1 ad n di E(X)_i # nolint
     #La media della media campionaria è la media della popolazione (PROPRIETà CHE VALE SEMPRE PER TUTTE LE VARIABILI) # nolint
