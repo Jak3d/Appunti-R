@@ -1,5 +1,5 @@
 data("Loblolly")
-
+#install("UsingR") #omesso, fare solo la prima volta
 str(Loblolly)
 mean(Loblolly$height)
 rnorm(100)
@@ -320,3 +320,19 @@ x <- rnorm(n, mean = mu, sd = sqrt(var))
 hist(x)
 #stop ignore
                         #Per teorema TLC il file è TLC.r
+
+
+
+#Casi particolari: 
+    #-Cosa succede se la variabile X_1 è già normale?: X_1 ~ N(mu,sigma) : media X_n ~ N(mu,sigma/(sqrt(n))) # nolint
+    #-Se le x sono già normali: X_1 ~ N(mu,sigma) : (S^2 * (n-1))/sigma^2 ~ X^2 (n-1) [per qualunque n] # nolint
+            #Distribuizione chi-quadro con n-1 (parametro) di libertà (i parametri sono i gradi di libertà) (serve per esempio per i test sulla varianza di una dist e per i test di indipendenza o di bontà del fit) # nolint
+
+#INTERVALLI DI CONFIDENZA
+    #Introduzione
+    #I campioni casuali che noi estraiamo non sono "random" al 100%, ma sono estratti da valori estratti da una variabile, quindi soggette alle leggi delle probabilità # nolint
+    #Dalle ipotesi sulla distribuzione della popolazione possiamo ottenere una certa PRECISIONE nell'usare le stime PUNTUALI per i parametri o per fare inferenza # nolint
+        #media X_n ~ media --> x_n
+        #S^2 --> s^2
+        #Sono stime puntuali dei parametri
+        #IC: valori intervallari non puntuali per la stima, intervallo numerico con CONFIDENZA (1-alpha){0.9 alpga=0.10 ; 0.95 alpha=0.05; 0.99 alpha=0.01} # nolint
