@@ -336,3 +336,138 @@ hist(x)
         #S^2 --> s^2
         #Sono stime puntuali dei parametri
         #IC: valori intervallari non puntuali per la stima, intervallo numerico con CONFIDENZA (1-alpha){0.9 alpga=0.10 ; 0.95 alpha=0.05; 0.99 alpha=0.01} # nolint
+#_____________________________________NUOVA LEZIONE_________________
+#Intervalli di confidenza:
+    #stima di un parametro di una popolazione non in modo puntuale, ma tramite un intervallo di valori
+    #.....a______________b....
+    #[a,b] + 1-alpha (confidenza)(tra 0 e 1)
+        #:  
+        #1-alpha = 0.95,0.90,0.99
+    #Diremo che l'intervallo di confidenza [ab] contiene il valore del parametro che ci interessa, ad es la media di una distribuzione
+    #della popolazione(per esempio mu) con confidenza 95%, 90% o 99%.
+    #LA CONFIDENZA NON è UNA PROBABILITà ma è collegata alla probabilità
+    #La probailità in questo caso deriva dal fatto che per ottenere la formula dell'intervallo di confidenza (IC) e quindi la loro 
+    #misura si parte da intervalli cosidettì aleatori(casuali) cioè che hanno come estremi delle variabili aleatorie o casuali
+    #quindi sono delle statistiche funzioni del campione.
+    #-Come ottenere un'intervallo di confidenza?
+        #Passo 1: trovare una quantità cosidetta pivotale (Q)
+            #è una variabile aleatoria funzione del campione e del parametro sconosciuto che però abbia una distribuzione note,
+            #per cui quindi si possono calcolare le probabilità.
+        #Esempio: 
+            #Il parametro da stimare è mu, l'attesa di X_1,
+            #la quantità pivotale sarà Q= (mediaCampinaria-mu)/(S/sqrt(n))
+            #deriva dal TLC quando n>30 e/o la distribuzione della popolazione è normale.
+            #Q ~ T_(n_1) [T di student con parametro n-1 i quali sono i gradi di libertà (degrees of freedom)]
+        #La T di student ha attesa (E) sempre uguale a zero, sempre simmetrica rispetto allo zero e ha una forma a campana con
+        #le code più alte della distribuzione (solo con un elevatissimo numero di gradi si comporta come una normale)
+        #Guardare le tavole di t di student (AH! LMAO) (sono carine però, spiegano come funzionano)
+                    #OPZIONALE
+                    #T student scoperto da william gospet, alla guinnes, negli uffici per il controllo di qualità
+                    #aveva scoperto che la Q non dava una normale, aveva le code più alte, da lì il nome in quanto non poteva usare il suo nome
+                    #e voleva prendere in giro i suoi ex compagni
+                    #FINE OPZIONALE
+            #Recap:     
+                #E[T]=0
+                #code più pesanti rispetto a N(0,1)
+                #Tende alla Z~N(0,1) per df--> inf (molto grande)
+                #Simmetrica rispetto alla sua media
+                #Ha un unico parametro, n° di gradi di libertà
+        #Passo n° 2: 
+            #Fissiamo il livello di confidenza 1-alpha (ad esempio 1-alpha = 0.95)
+            #e troviamo i valori t_1 e t_2, realizziazione di T, tali che:
+                #P(t_1 < Q < t_2) = 1-alpha = 0.95 [riguardare definizione di Q, mostra che è possibile scrivere la probabilità]
+            #!!!!!!!!!!!!!!
+            #Per ottenere i due estremi dell'intervallo aleatori,facciamo 2 passaggi: 
+                #(1) t_1 < media(X)-mu / s*sqrt(n) = media(X)-mu > s/(sqrt(n))
+                                                #  = mu < media(X_n)-S/sqrt(n)*t_1
+                #(2) t_2 > media(X)-mu / s*sqrt(n) = media(X)-mu > s/(sqrt(n))
+                                                # mu > media(X_n)-S/sqrt(n)*t_2
+                #mettendoli insieme otteniamo: 
+                    #PROBABILITà che( media(X_n)-S/sqrt(n)*t_2 < mu < media(X_n)-S/sqrt(n)*t_1) = 1-alpha
+                    #ottenendo così l'intervallo aleatorio: 
+                        #[media(X_n)-S/sqrt(n)*t_2 , mu < media(X_n)-S/sqrt(n)*t_1]
+                #grafico della lezione 21/11/2022 alle 15:52
+                    #nelle 2 code estreme avremo lo 5% di P (2,5 per lato)
+                    #la parte al centro sarà uguale al 95%
+                    #Area delle 2 code = 0.05 = alpha
+                    #Il grafico non deve per forza essere simmetrico con le percentuali, la curca però rimane simmetrica
+                    #(si può avere 3% a sx e 2% a dx)
+                    #i loro quantili "sommati" faranno sempre 1 (quantile indica dove si passa da area alpha a area enorme)
+                #L'intervallo di confidenza al 95% che ha per estremi q_0,025 e q_0,975 è il più stretto e quindi lo si preferisce:
+                #Per la T di student vale che il q_0,025 è semplicemente -q_0,975 # nolint
+        #Passo 3°
+            #Dall'intervallo aleatorio otteniamo l'intervallo misurato in base al campione, e quindi l'intervallo numerico.
+            #IC al_95% = [media(x) - t_2*(s/sqrt(n)), media(x) + t_2*(s/sqrt(n))]     [t_1 = - t_2]
+                #è simmetrico rispetto alla media campionaria media(x): 
+                    #estremo inferiore = media(x) - t_2*(s/sqrt(n))
+                    #estremo superiore = media(x) + t_2*(s/sqrt(n))
+                #anche chiamato ERRORE STANDARD SULLA MEDIA (la parte uguale, senza la x e senza il segno)
+                #L'ampiezza dell'intervallo è uguale = 2*t_2*(s/sqrt(n))
+            #Al crescere di n (taglia del campione)l'intervallo di confidenza diventa più stretto, quindi più preciso
+            #Se la confidenza cresce, l'IC diventa più ampio, quindi meno preciso
+            #Confidenza e precisione non sono mai migliorabili contemporaneamente per gli IC, occorre scegliere uno dei due (tocca allo statistico decidere in base alla situazione)
+            #Non sempre la taglia è aumentabile.
+    #Come calcolare l'IC
+library("UsingR")
+data(babies)
+dstr(babies)
+#Calcolo l'IC al 95% per age
+t.test(babies$age) #non abbiamo imparato ancora come eseguire un test
+#IC al 90%
+t.test(babies$age, conf.level = 0.90)
+#IC al 99%
+t.test(babies$age, conf.level = 0.99)
+# 95% 27.01103 27.73168 Più intermedio (si)
+# 90% 27.06903 27.67368 Più preciso, ma meno confidenza
+# 99% 26.89754 27.84518 Meno preciso, più confidenza
+
+#Cosa vuol dire aver calcolato un IC?
+    #Supponiamo di avere una popolazione con mu = 26.5 (valore del parametro vero sconosciuto)
+    #*vedere grafico alle 16:30*
+    #Tanti IC possibili, ripetuti esperimentinelle stesse condizioni
+    #Ripetendo tante volte lo stesso esperimento nelle stesse condizioni, mediamente in alpha% dei casi il valore del parametro
+    #non sarebbe contenuto nell'IC calcolato in base al dati
+    #Nel 95% dei casi il parametro sarà contenuto nell'IC (perchè l'abbiamo creato così), di solito si fissa una percentuale, 5% in questo caso
+    #che rappresenta il nostro margine di errore, fissato a priori
+#SECONDO TIPO DI IC
+#Intervalli di confidenza per una proporzione pigreco per una popolazione
+    #p(pigreco) proporzione nella popolazione --> p capelleto = proporzione campionaria
+    #X ~ Bernulli(p) (v.a. dicotomica)
+    #abbiamo solo due valori per questa v.a.: 
+        #P(X=s)=p; P(X=f)=1-p
+        #Dove s è il successo e f è il fallimento
+    #con (X_1,....,X_n) v.a. i.i.d X_1 ~ Bernulli(p)
+    #La media(X_1) = sum di k di k * P(X_1 - k) = 1*p + 0(1-p)=p = media della popolazione
+    #media(X_n) = (1/n) * sum di i da 1 ad n di X_i = p cappelletto = media(X_n) (o X con linea sopra)
+
+    #Passaggi per la costruzione dell'intervallo di confidenza al 95% per p: 
+    #1. Quantità pivotale (funzione delle variabili del campione e del parametro ignoto [p]); è una v.a. che deve avere una distribuzione NOTA
+        # Q = [media(X_n) - p] / (dev.st. di media(X_n)/sqrt(n)) = (1/n * sum di i da 1 ad n di X_i - p)/ sqrt[p(1-p)/n]
+        #Questa funzione Q del campione (tramite la media campionaria e del parametro p, media della popolazione) è di un tipo che abbiamo già visto
+        # media(X_n) - E(X_1) / sqrt(var(X_1)/n) per n-->inf (TLC) N(0,1)  
+        #Per n > 30 la distribuzione della nostra quantità pivotale Q è N(0,1)
+        #RICORDARSI: stiamo parlando di proporzioni, per n<30 non ha senso calcolare la normalità della distribuzione della popolazione da cui
+        #è estratto il campione (prima usavamo o n > 30 o distribuzione normalizzata), per BERNULLI serve lo stesso UNA TAGLIA GRANDE, altrimenti 
+        #non sarebbe attendibile, occorre comunque un campione di taglia grande, ovvero n > 30, anche se 30 è ancora un po' piccolo, ideale = diverse centinaia
+    #2. Trovare i quantili normali (non di student) della distribuzione di Q, Z_1 e Z_2 tali che: 
+        #P(t_1 < (media(X)-p) / sqrt[p(1-p)/n] < t_2) = 1-alpha = 0.95
+        #*Guardare grafico delle 16:50* (ma è praticamente uguale al grafico dell'IC con alpha = 0.05)
+        # Z_1 = q_0,025 = q_(alpha/2)
+        # Z_2 = q_0,975 = q_(1-alpha/2)
+    #3. Trovare le formule per le 2 variabili a e b tali che: (contengono la media campionaria)
+        #P(A<p<B) = 1-alpha=0.95    (Bisogna fare le due disuguaglianze)
+        #Otteniamo il seguente intervallo:
+            #IC_95%(p) = [p cappelletto -Z_2*(sqrt(p(1-p)/n)), p cappelletto + Z_2*(sqrt(p(1-p)/n))]
+            #Z_2 = q_0,975 = 1,96 (valore fisso) (credo da tabelle?) (vedere per 95% su tabella)
+            #IC_90%(p) = [p cappelletto -1,64*(sqrt(p cappelletto(1-p cappelletto)/n)), p cappelletto + 1,64*(sqrt(p cappelletto(1-p cappelletto)/n))]
+            #IC_99%(p) = [p cappelletto -2,58*(sqrt(p cappelletto(1-p cappelletto)/n)), p cappelletto + 2,58*(sqrt(p cappelletto(1-p cappelletto)/n))]
+            #P cappelletto? perché solo in 90% e 99%? (Ricontrollare da lezione 21/11/2022)
+            #Tutta area = 99%
+            #Quantile stretto, area sotto = 90%
+            #Quantile normale, area sotto = 95%
+            #q_0,975 = q_(1-0,05) = 1,96
+            #q_0,95 = q_(1-0,10) = 1,64
+            #q_0,995 = q_(1-0,01) = 2,58
+            #Guardare grafico delle 17:00 sull'errore standard sulla proporzione fatto da E su p cappelletto
+
+#Prossima lezione faremo i test
