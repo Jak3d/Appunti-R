@@ -471,3 +471,89 @@ t.test(babies$age, conf.level = 0.99)
             #Guardare grafico delle 17:00 sull'errore standard sulla proporzione fatto da E su p cappelletto
 
 #Prossima lezione faremo i test
+#___________________________________________________________________NUOVA LEZIONE____________________________________________________________________
+#Test statistici di ipotesi e Test statistici per una media
+
+#IC PER UNA POPOLAZIONE
+#IC_95% (p) = [p cappelletto - 1.96(sqrt(p cappelletto(1-p cappelletto)/n),p cappelletto + 1.96(sqrt(p cappelletto(1-p cappelletto)/n))]
+# dove 1.96 è il quantile 1-(alpha/2) nella ~ Normale dove o.95 + il livello di confidenza che abbiamo scelto
+#prop.test() --> test che utilizza la statistica di X^2
+#binom.test() --> test esatto
+#Verrà detto all'esame quale utilizzare dei 2 !!!!!
+#Quando non si è sicuri su una procedura di R, usare HELP (ahahah immagina non essere su R ma su VScode)
+
+#calcolare l'intervallo di condifenza per la proprzione di favorevoli a una certa soluzione dato che un campione di 1000 intervistati
+#580 si sono dichiarati favorevoli alla soluzione.
+x<-580
+n<-1000
+prop.test(x,n)
+# 0.5486573 0.6107204
+prop.test(x,n,conf.level = 0.90)
+# 0.5536427 0.6059172
+prop.test(x,n,conf.level = 0.99)
+# 0.5388960 0.6200364
+
+#Test per una proporzione: binom.test
+binom.test(x,n)
+# 0.5487112 0.6108164
+binom.test(x,n,conf.level = 0.90)
+# 0.5536772 0.6059729
+#Tra binom e proptest si hanno risultati DIVERSI
+
+#Intervalli di confidenza PER 2 MEDIE
+    #IC per la differenza tra 2 medie
+        #IC per mu_2 - mu_1 , i due campioni
+        #Possono essere di 2 tipi: 
+            # 1) campioni indipendenti
+                #es: tempo medio ad assemblare due componenti dello stesso tipo in 2 linee diverse o separate
+            # 2) campioni dipendenti o appaiati
+                #es: tempo medio di assemblaggio di componenti prima e dopo la manutenzione (casi diversi)
+            #Non sarebbe corretto usare lo stesso tipo di procedure statistiche in entrambi i casi
+            #Per calcolare intervallo di confidenza per mu_2 - mu_1 è necessario che entrambi i campioni abbiano taglia maggiore n>= 30
+                # o siano estratti da distribuzioni normali
+            #Nel caso 1) n_1 e n_2 possono anche essere diverse (non esageriamo però)
+            #Nel caso 2) devono avere la stessa taglia
+    #1) Parametro da stimare è la differenza tra media: mu_2-mu_1 che vuole dire l'attesa di X nella seconda popolazione
+        #meno l'attesa della X nella prima popolazione
+        #Ricordare quantità pivotale: 
+            #Q =[ media(X_2)-meadia(X_1) - (mu_2-mu_1)] / SE(media(X_2)-media(X_1) [differenza tra i parametri nelle popolazioni a destra][medie campionarie a sinistra]
+            #dove SE è lo standard error sulla differenza della medie campionarie
+            #SE(X_2-X_1) se le varianze delle 2 popolazioni sigma_2^2 e sigma_1^2 sono uguali ha una forma 1.a)
+            #Altrimenti se sono diverse, hanno una forma diversa 1.b)
+        #Nel caso 1.a) Q ha una distribuzione del tipo T di Student con un numero di gradi di libertà di f pari a n_1+n_2-2
+        #Nel caso 1.b) Q ha una distribuzione T di Student con un numero di gradi di libertà che può essere DECIMALE (non interi)
+
+        #Se non si conosce la  varianza, è molto più furbo provare a usare il 1.b), altrimenti si guarda sia 1.a e 1.b 
+        # e si controlla la differenza del valore, se è elevata o un minimo evidente, si fa il test sulle varianze
+
+    #2) Parametro da stimare: mu_2-mu_1
+        #In realtà il campione non sarà fatto da coppie di valori ma da differenze, uno per ogni campione, ma da differenza di valori
+        #appaiati [(x_1,n),(x_2,n)] (coppie, a forma di coppie)(ma appaiate)
+        #Dove diremo d_1 = x_2_1 - x_1_1, con d_n = x_2_n - x_1_n
+        #Avremo un campione estratto dalla distribuzione della nuova variabile DIFFEREZA che è D=X_2 - X_1 (maiuscolo perchè sono variabili)
+        #L'intervallo di confidenza verrà calcolato per il valore medio di D: mu_D = attesa[D]
+            #Q ha una distribuzione T di Student con n-1 gradi, ovvero la taglia di entrembi i campioni -1 (qualcuno faccia una pull per spiegare il -1, grazie)
+            #Questo IC non è un IC per la differenza tra medie, MA PER LA MEDIA DI DIFFERENZE
+#t.test(1° campione, 2° campione) se caso 1), ovvero indipendenti
+#t.test(1° campione, 2° campione,paired=TRUE) se caso 2) ovvero dipendenti
+
+##IC per la differenza tra medie, caso non appaiato
+library("UsingR")
+data(babies)
+str(babies)
+table(babies$race)
+#Vogliamo calcolare l'IC al 95% per la differenza nelle medie dei pesi alla nascita per bambini di race materna 5 e 7
+wt5 <- babies$wt[babies$race == 5] #1° campione
+wt7 <- babies$wt[babies$race == 7] #2° campione
+length(wt5)
+length(wt7)
+
+#Le taglie sono diverse, MA COMPATIBILI e sopratutto MAGGIORI DI 30, non sappiamo se è da una dist Normale
+t.test(wt5,wt7) #Sono evidentemente indipendente, quindi uso questa formula
+#IC per la differenza tra i pesi medi alla nascita di bambini nati da madri di race 5 e race 7
+t.test(wt5,wt7,conf.level=0.90)
+t.test(wt5,wt7,conf.level=0.99)
+#IC per la differenza tra l'età tra madre e padre
+
+t.test(babies$age,babies$dage,paired=TRUE) #Età media delle madri è più piccola rispetto ai padri, il valore sarà negativo
+#La media delle differenze è UN SINGOLO VALORE (se hai letto prima sai il perché)
