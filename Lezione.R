@@ -557,3 +557,71 @@ t.test(wt5,wt7,conf.level=0.99)
 
 t.test(babies$age,babies$dage,paired=TRUE) #Età media delle madri è più piccola rispetto ai padri, il valore sarà negativo
 #La media delle differenze è UN SINGOLO VALORE (se hai letto prima sai il perché)
+
+#Intervallo di confidenza per la differenza tra due proporzioni
+    #Popolazione 1 X_1                  Popolazione 2 X_2
+
+#X_1 ~ Bernulli (p_1)                   X_2 ~ Bernulli(p_2)
+#p cappelletto_1                        p cappelletto_2
+#tramite p cap_1 - p cap_2 -----> p_1 - p_2   (parametro da stimare)[differenza tra 2 parametri]
+    #Q =  [p cap_1 - p cap_2 - (p_1 - p_2)]/SE(p cap_1 - p cap_2)
+    #Ha una distribuzione approssimabile con la normale all'incremento delle taglie n_1 e n_2
+#Useremo prop.test(x_1,x_2,n_1,n_2)
+#Esempio dal libro Verzani Esercizio 8-10 p. 282
+# n_1 = 1000 persone intervistate
+# x_1 = 560 (numero di successi)
+# n_2 = 1200
+# x_2 = 570
+#Calcolare l'IC al 95% per la differenza tra le due proporzioni p_1-p_2
+
+x1 <- 560
+n1 <- 1000
+x2 <- 570
+n2 <- 1200
+
+prop.test(c(x1,x2),c(n1,n2)) #c concatena, ricordare che usiamo delle coppie?
+# 95 percent confidence interval:
+# 0.04231207 0.12768793
+# siccome gli estremi sono positivi, vuol dire che la prima proporzioni è superiore della seconda, nella prima intervista c'erano più casi positivi rispetto alla seconda
+#Se l'intervallo di confidenza comprende lo zero, p_1 e p_2 non possiamo affermare che siano diverse
+#Altrimenti, se i valori sono negativi, p_1 < p_2, se sono positivi, p_1 > p_2 e possiamo dire che è presente una realzione d'ordine
+#Tutto ciò viene affermato con una confidenza del 95%, NON CON CERTEZZA (la statistica inferenziale non ci darà mai un risultato certo)
+
+#Iniziamo a parlare di test
+# TEST STATISTICI DI IPOTESI
+    #Per controllare la variabilità e misurare l'incertezza viste nella stima statistica usiamo 2 metodi: 
+        #Intervalli di confidenza
+        #Test di ipotesi (sarà solo una grossa introduzione, ne esistono troppi per studiarli tutti ... in 3 lezioni)
+    #I test di ipotesi sono delle procedure statistiche che permettono di validare o no un'ipotesi
+    #1) Dobbiamo stabilire il tipo di variabile e quindi il parametro da sottoporre al test
+    #2) Stabilire l'ipotesi NULLA h_0 e l'ipotesi alternativa h_1
+    #3) Calcolare il valore della statistica di test e quindi il pValue
+    #4) Prendere la decisione:
+        #Rifiutare h_0
+        #Non rifiutare h_0
+# DEF: L'ipotesi è una proposizione (quantitativa o no) che riguarda la distribuzione della popolazione, per esempio nel caso
+    #quantitativo il valore dei parametri
+#DEF : Test parametrici : Le ioptesi riguardano i paramtri di una distribuzione, quindi sono di tipo quantitativo
+    #Abbiamo le ipotesi: 
+        #h_0: mu=10  ipotesi semplice h=hypoteis, 0 indica 0 differenza, è un'uguaglianza pura e si chiama ipotesi nulla
+        #h_1 o H_A : mu != h_0 dove 1/A indica non 0 o alternativo e si chiama ipotesi alternativa
+        #h_1 unito a h_0 = insieme dei paramtri
+    #h_0: mu = 10
+    #h_1: mu!= 10 oppure mu>10 oppure mu=12, ne esistono davvero tante cose possibili di alternative
+        # ma se h_1 = mu > 10, per fare l'insieme totale, h_0 sarà mu <= 10, DEVONO FORMARE L'INTERO INSIEME
+    #Se l'ipotesi è : 
+        #h_0: mu=10
+        #h_1: mu!=10 -> two-sided test (a 2 code)
+        #h_1: mu>10 -> one sided test right-tail test (a coda destra)
+        #h_1: mu<10 -> one sided test left-tail  test (a coda sinistra)
+#Il compito del pValue, sarà di rifiutare o accettare le ipotesi
+#DEF: Statistica di test: v.a. funzione del campione[dle valore ipotizzato per il parametro] la cui distribuzione è NOTA
+
+#I dati campionari e quindi la realizzazione della statistica di test che viene ottenuta da essi ci consentono di stabilire tramite il calcolo del pValue
+    #(che è una probabilità valutata per la statistica di test[che capiremo attraverso la media dei test ?]) se l'ipotesi h_0 va RIFIUTATA o NO e quindi prendere la decisione
+#L'esito di un test sarà di questo tipo:
+    #"I dati forniscono sufficiente evidenza statistica (oppure NON) per rifiutare h_0 a favore di h_1" !!!!!!! NON è SCRITTO A CASO  !!!!!
+    #DEVE essere RIFIUTARE o NO, anche nel TESTO, tutto si basa sul rifiutare o no.
+
+
+#Un test statistico conduce a rifiutare oppure al non rifiutare l'ipotesi nulla h_0, NON ad accettare, sarebbe ERRORE
