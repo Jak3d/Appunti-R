@@ -624,4 +624,126 @@ prop.test(c(x1,x2),c(n1,n2)) #c concatena, ricordare che usiamo delle coppie?
     #DEVE essere RIFIUTARE o NO, anche nel TESTO, tutto si basa sul rifiutare o no.
 
 
+
 #Un test statistico conduce a rifiutare oppure al non rifiutare l'ipotesi nulla h_0, NON ad accettare, sarebbe ERRORE
+
+#________________________________NUOVA LEZIONE_________________________________________________ 
+
+#Test di ipotesi per una media e per una proporzione 
+    #1. ipotsi nulla:
+        #H_0: mu = mu_0
+        #H_1: mu != mu_0
+        #Questo è un caso di test a due code o bilaterale (ci interessa sempre di più l'ipotesi alternativa a quella nulla)
+
+        #H_0: mu <= mu_0
+        #H_1: mu > mu_0
+        #test ad una coda o unilaterale (coda a destra)
+
+        #H_0: mu >= mu_0
+        #H_1: mu < mu_0
+        #test ad una coda o unilaterale (coda a sinistra)
+
+    #Test per una media
+    #Test per una proporzione
+#Idea (valida per tutti i test statistici di ipotesi): 
+    #se h_0 è vera, si cerca una v.a. la cui distribuzione sia nota e che coinvolga una statistica (quindi è una funzione delle variabili aleatorie che conpongono il campione).
+    #Se in base ai dati si ottiene un risultato attendibile o ragionevole secondo h_0, l'ipotesi nulla non viene rifiutata e viceversa. 
+    #Come si decide se il risultato è attendibile? Ce lo dice i P-Value (che è una probabilità)
+
+    #Test per una media: 
+        #h_0 : mu = 10   #ipotesi nulla mai con solo > o < siccome dobbiamo calcolare la probabilità, abbiamo bisogno di dare valori specifici alla distribuzione, ottenuto da h_0
+        #h_2 : mu > 10 
+
+        #P(1/n * sum di i da 1 ad n di X_i   >  media x = 1/n * sum di i da 1 ad n di x_i) = p (p-value)  cioè la probabilità di ottenere almeno un valore estremo quanto quello ottenuto dai dati
+        #ci vuole un mu, quello di h_0
+        #Usiamo ed otteniamo la statistica di test con una distribuzione che corrisponde all'ipotesi h_0
+                #statistica di test = T_(n-1) ~ (media x_n - mu_0) / S*sqrt(n)  --> T di student con n-1 gradi di libertà
+            #Il piccolo del p-value è 0,05
+            #media x valore ottenuto dai dati campionari -> probabilità abbastanza grande (> di 0,05): non viene rifiutata
+            #media x valore ottenuto dai dati campionari -> probabilità molto piccola rispetto ad h_1 (< di 0,05): viene rifiutata
+                 #siamo portati a ritenere che il valore si avveri molto più frequentemente sotto h_1 che non sotto h_0
+
+                #!!!Attenzione le distribuzioni implicate non sono quelle delle popolazioni da cui estraiamo i campioni, ma sono quelle delle statistiche (o delle statistiche di test) come quelle che abbiamo scritto sopra
+            #H_0 : mu = 10; 
+            #H_1 : mu < 10; (test a coda sinistra, ricordarsi che si basa su H_1)
+            #(ci sono grafici interessanti sulle slides)
+            # a coda sinistra --> si calcola che la distribuzione sia minore o ugule a quella osservata
+
+            #H_0 : mu = 10;
+            #H_1 : mu > 10; (a coda destra)
+            #P(media X >= media x)
+            
+
+            #H_0 : mu = mu_0
+            #H_1 : mu != mu_0 (a due code)
+            #si guarda il modulo di entrambi i lati, in quanto osserviamo 2 grafici (< di mu_0 e > di mu_0)
+            #--> P(|media X| >=media x)  p-value test a due code
+
+            #Quale statistica di test utilizziamo?
+                 #P ((media X - mu_0)/S*swrt(n) > (media x - mu_0)/S * sqrt(n)) = p = P(T_(n-1) > y)
+                 # ~T la stessa utilizza per gli IC
+                 #Quali sono i valori del p-value che discriminano il rifiuto di h_0 dal non rifiuto?
+                    #p = 0,01
+                    #p = 0,05 --> se p > 0,05 non si rifiuta, se p < 0,05 si rifiuta
+                    #p = 0,10
+                #Si può sempre eseguire un T-test? (ovvero con la T di student per ipotesi su una media)
+                        #NO, perché la taglia deve essere almeno 30, oppure se n < 30 la distribuzione da cui è stato estratto il campione deve essere normale
+                # n >= 30 --> si può eseguire il tet indipendentemente alla distribuzione della popolazione
+                # n < 30, occorre verificare che la distribuzione da cui è estratto il campione sia normale
+                #Se nessuna delle due è verificata, si possono usare dei test cosidetti parametrici [test di Wilcoxon] che sottopongono a test le mediane (non le vediamo)(mediana è circa le media)
+#Comando per i test: t.test(variabile, mu = mu_0, c'è o non c'è la coda [alternative = Less (sinistra), Greater (coda destra)]) #la coda si mette solo se è ad una coda, il default è a due code
+
+library("UsingR")
+data("alaska.pipeline")
+str(alaska.pipeline)
+#Verificare che la media di field defect sia: 
+    #1. uguale a 20
+    #2. minore di 30
+    #3. maggiore di 22
+ #Test 1 è bilaterale 
+    #H_0 : mu = 20
+    #H_1 : mu != 20
+
+t.test(alaska.pipeline$field.defect, mu = 20)
+#p.value < 0.05 , quindi si rifiuta:
+    #C'è sufficiente evidenza statistica per rifiutare l'ipotesi nulla a favore di quella alternativa
+
+#2. Test unilaterale coda a destra
+    #H_0 : mu <= 30
+    #H_1 : mu > 30
+t.test(alaska.pipeline$field.defect, mu = 30, alternative = "greater")
+#p.value < 0,05, quindi si fifiuta:
+    #C'è sufficiente evidenza statistica per rifiutare l'ipotesi nulla a favore di quella alternativa
+
+#3. Test unilaterale coda a sinistra
+    #H_0 : mu >= 22
+    #H_1 : mu < 22
+t.test(alaska.pipeline$field.defect, mu = 22, alternative = "less")
+#p.value > 0.05 (p.value = 1 [o molto vicino, 0,9999]):
+    #I dati non ci forniscono sufficiente evidenza per rifiutare l'ipotesi nulla
+
+#Test sulle PROPORZIONI
+    #p cappelletto = n° successi / n° totale di prove = proporzione campionaria, che stima la proporzione effettiva della popolazione
+    #A quale domanda dobbiamo rispondere?
+        #a partire da una proporzione campionaria, possiamo affermare ad un certo livello di significatività che sia uguale, maggiore o minore di un valore ipotizzato?
+    
+    #H_0 : p = p_0
+    #H_1 : p != p_0 test bilaterale a due code
+
+    #H_0 : p >= p_0
+    #H_1 : p < p_0 test unilaterale a coda a sinista
+
+    #H_0 : p <= p_0
+    #H_1 : p > p_0 test unilaterale a coda a destra
+
+    #Il campione casuale (estrtatto da una popolazione di bernulli) è il numero di successi x in n prove
+        #X ~ Binomiale (n,p) dove p è la prob di successo e n è il numero di prove   [la binom è la somma dei bernulli {credo}]
+
+       #Questa è una STATISTICA #P cappelletto = sum di i da 1 ad n di X_i  --> per n -> inf si avvicina ad una normale
+                #X_i ~ Bernulli(p)
+        #occorre individuare una statistica di test che contenga il paramtro stimato h_0 che ci permetta di caloclare probabilità del tipo
+                #P(P cappelletto > p cappelletto) = p.value  (p cappelletto sotto ipotesi h_0 o nulla)
+    #Statistica di test: 
+        #(P cappelletto - p_0)/ sqrt([p_0(1-p_0)]/n) ~ sotto H_0, n grande, N(p_0 , sqrt[p_0(1-p_0)/n])
+
+    #prop.test(x,n,alternative="") dove x = n° successi, n = n° prove, alternative = testa di coda
