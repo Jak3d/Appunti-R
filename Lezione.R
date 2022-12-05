@@ -323,7 +323,7 @@ hist(x)
 
 
 
-#Casi particolari: 
+#Casi particolari:
     #-Cosa succede se la variabile X_1 è già normale?: X_1 ~ N(mu,sigma) : media X_n ~ N(mu,sigma/(sqrt(n))) # nolint
     #-Se le x sono già normali: X_1 ~ N(mu,sigma) : (S^2 * (n-1))/sigma^2 ~ X^2 (n-1) [per qualunque n] # nolint
             #Distribuizione chi-quadro con n-1 (parametro) di libertà (i parametri sono i gradi di libertà) (serve per esempio per i test sulla varianza di una dist e per i test di indipendenza o di bontà del fit) # nolint
@@ -341,7 +341,7 @@ hist(x)
     #stima di un parametro di una popolazione non in modo puntuale, ma tramite un intervallo di valori
     #.....a______________b....
     #[a,b] + 1-alpha (confidenza)(tra 0 e 1)
-        #:  
+        #: 
         #1-alpha = 0.95,0.90,0.99
     #Diremo che l'intervallo di confidenza [ab] contiene il valore del parametro che ci interessa, ad es la media di una distribuzione
     #della popolazione(per esempio mu) con confidenza 95%, 90% o 99%.
@@ -746,4 +746,133 @@ t.test(alaska.pipeline$field.defect, mu = 22, alternative = "less")
     #Statistica di test: 
         #(P cappelletto - p_0)/ sqrt([p_0(1-p_0)]/n) ~ sotto H_0, n grande, N(p_0 , sqrt[p_0(1-p_0)/n])
 
-    #prop.test(x,n,alternative="") dove x = n° successi, n = n° prove, alternative = testa di coda
+    #prop.test(x,n,p,alternative="") dove x = n° successi, n = n° prove, alternative = testa di coda ?? rivalutare la presenza di p (guardare riga 792)
+
+
+#______________________________________NUOVA LEZIONE____________________________________________
+#Esercizi del verzani
+library("UsingR")
+data("stud.recs")
+
+ #test per una media
+ #h_0 mu_sta.m = 500
+ #h_1 mu sta.m != 500
+ length(stud.recs$sat.m) # > 30 allora sufficientemente grande, non dobbiamo verificare la normalità
+ t.test(stud.recs$sat.m, mu=500)  # nolint
+ #p-value = 0.01099 --> non si accetta
+
+ #Es: 9_11
+data("babies")
+heights <- babies$dht[babies$dht != 99]
+#Test a una coda(destra)
+#h_0 : mu_dht <= 68
+#h_1 : mu_dht > 68
+t.test(heights, mu = 68, alternative = "greater") #< 0.05 rifiutiamo h_0 in favore di h_1
+
+#test sulle proporzioni !!
+
+#Presi sempre dal verzani
+#Es 9.3 pg 303
+
+#40 su 50 non hanno ricaduta dopo malattia, senza droga percentuale di ricorrenza attesa = 75%
+# n = 50 pazienti
+# x = 40 numPazienti
+# p_0 = 75%
+# H_0 : p  <= 0.75
+# H_1 : p > 0.75
+#si pone come ipotesi alternativa quella che si vorrebbe confermare sperando di avere sufficiente evidenza nei statistica dai dati per negare l'ipotessi opposta nulla
+
+n <- 50
+
+x <- 40
+p_0 <- 0.75
+prop.test(x, n,p_0, alternative = "greater") #NON abbiamo abbastanza prova statistica per rifiutare l'ipotesi nulla in favore dell'ipotesi alternativa
+#In alternativa
+binom.test(x, n, p_0, alternative = "greater")
+#Non specificare il p implementa automaticamente P = 0.5 !!!!!! (sia per binom che per prop)
+
+#Es 9.7 pg 303
+# p_0 = 10%
+# 25000 = num
+# 2700 = macchine con problemi
+p_0 <- 0.10
+n <- 25000
+x <- 2700
+#h_0 : p_0 <= 0.10
+#h_0 : p_0 > 0.10 
+#Poniamo come ipotesi alternativa quella che vorremmo verificare sperando di rigiutare h_0
+prop.test(x, n, p_0, alternative= "greater") #C'è evidente prova statistica per rifiutare l'ipotesi nulla a favore di quella alternativa
+binom.test(x, n, p_0, alternative= "greater")
+#Sottoponiamo a test l'ipotesi che la percentuale con difetti entro il periodo di garanzia sia inferiore a 0.125
+#h_0 : p >= 0.125
+#h_1 : p < 0.125
+p_0 <- 0.125
+prop.test(x, n, p_0, alternative= "less") #C'è abbastanza prova statistica per rifiutare l'ipotesi nulla a favore di quella alternativa
+
+#Puntualizzazione sui test per una proporzione
+#Puntualizzazione sui test per due proporzioni
+
+#Parte da un esercizio: 
+    #Tasso di povertà begli stati uniti nel 2010:15%
+    #Nel 2011 si considera si considera un campione di 150000 persone su cui viene stimato il nuovo tasso di povertà : 15,13%
+    #Si può affermare ad un opportuno livello di significatività che il tasso di povertà sia aumentato nel 2011 rispetto al 2010?
+     #abbiamo la proporzione di successi, non il numero, dobbiamo solo calcolarcelo
+    #n=150000 
+    #p_0 = 0.15
+    #P_c = 0.1513 proporzione campionaria
+    #x = p_c * n
+
+n <- 150000
+p_0 = 0.15
+p_c = 0.1513
+x <- p_c * n
+#h_0 : p <= 0.15
+#h_1 : p > 0.15
+prop.test(x,n,p_0,alternative = "greater") #Non c'è abbastanza prova campionaria per rifiutare l'ipotesi nulla in favore dell'ipotesi alternativa
+
+#Test per due proporzioni
+#Con i dati di prima, (avessi anche la taglia del campione del 2010), le proporzioni di povertà negli usa negli anni 2010 e 2011 sono state le stesse?
+#Oppure, le previsioni di voto in due momenti diversi
+#Funzionamento di un certo tipo di macchinari prima e dopo un intervento di manutenzione
+#etc..
+#Torniamo ai dati sul tasso di povertà negli USA nel 2010 e 2011
+#p_c_1 : tasso povertà stimato nel 2010
+#p_c_2 : tasso povertà stimato nel 2011  (la c vuol dire campionaria,cappelletto)
+#Domanda : si può affermare che il tasso di povertà negli USA sia aumentato (o invariato) tra il 2010 ed il 2011?
+
+#Domanda 1
+#h_0 : p_1 = p_2 (p_1 - p_2 = 0)
+#h_1 : p_1 > p_2  #test a coda destra
+
+#Domanda 2
+#h_0 : p_1 = p_2 (p_1 - p_2 = 0)
+#h_1 : p_1 !=p_2 #test a due code o bilaterale
+
+#X_1 ~ Binom (n_1, p_1) #n_1 = numero di prove, taglia del campione
+#X_2 ~ Binom (n_2, p_2) 
+#n_1 può essere diverso da n_2
+#Statistica di test = stima della proporzione e le sottraiamo l'una dall'altra
+# Z = [p_c_1 - p_c_2 -(p_1 - p_2)]/SE(p_1 -p_2)   #differenza ipotizzata tra parentesi, di solito = 0
+#Dove SE è l'errore standard sulla differenza tra popolazione
+#SE(p_1-p_2)_h0 = sqrt(p_1(1-p_1)/n_1 + p_2(1-p_2)/n_2)
+#p_1 e p_2 sono le proporzioni della popolazione, cioè incognite, ma sotto h_0 sono uguali siccome per h_0 (p_1 = p_2)
+#che diventa sqrt(p(1-p)*(1/n_1 + 1/n_2)) 
+#ma p è ancora incognita: 
+    # Stimiamo p come : p_c = (x_1 + x_2 )/ n_1 + n_2
+    # = somma dei successi / somma delle taglie dei campioni
+# (p_1_c + p_2_c) / n_1 + n_2
+#Z = (p_1_c - p_2_c)/ sqrt(p(1-p)*(1/n_1 + 1/n_2)) ~ N(0,1) per taglie abbastanza grandi (proporzioni non gli bastano normali, hanno bisogno di qualche centianaia di campioni)
+#Come lo eseguiamo in R?
+#prop.test(x,n,p_0,alternative="") dove x = c(x_1,x_2) e n=c(n_1,n_2) dove c è concatenate siccome sono requisiti dei vettori (bisognerebbe mettere p_1 - p_2, ma spesso è 0 e quindi non si mette)
+
+n_1 <- 160000
+p_1_c <- 0.1513
+n_2 <- 150000
+p_2_c <- 0.15
+#sottoporre a test l'ipotesi che nel 2012 il tasso di povertà sia diminuito
+#h_0 : p1 <= p2
+#h_1 : p1 > p2
+
+x_1 <- p_1_c * n_1
+x_2 <- p_2_c * n_2
+prop.test(c(x_1,x_2),c(n_1,n_2),alternative = "greater") #QUESTO è MOLTO IMPORTANTE
