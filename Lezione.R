@@ -876,3 +876,149 @@ p_2_c <- 0.15
 x_1 <- p_1_c * n_1
 x_2 <- p_2_c * n_2
 prop.test(c(x_1,x_2),c(n_1,n_2),alternative = "greater") #QUESTO è MOLTO IMPORTANTE
+
+#__________________________NUOVA LEZIONE______________________________
+#Es. 9.26 pg. 320
+#1250 n_1
+#98,9 %
+
+#1100 n_2
+#96,9
+
+n_1 <- 1250
+p_1_c <- 0.989
+n_2 <- 1100
+p_2_c <- 0.969
+#h_0 : p_1 = p_2
+#h_1 : p_1 != p_2 , test a due code
+
+x_1 <- p_1_c *n_1
+x_2 <- p_2_c * n_2
+
+prop.test(c(x_1,x_2),c(n_1,n_2))  #p-value = 0.001042
+#C'è abbastanza prova statistica per rifiutare l'ipotesi nulla a favore di quella alternativa
+#Possiamo sostenere ad un opportuno livello di significatività che la proporzione sia diminuita?
+
+#h_0 : p_1 <= p_2
+#h_1 : p_1 > p_2 , test a coda destra
+prop.test(c(x_1,x_2),c(n_1,n_2),alternative = "greater")#C'è suffuciente evidenza statistica per rifiutare l'ipotesi nulla a favore di quella alterantiva
+
+#Test sulla differenza tra medie: 
+
+    #Es: confronto da durata medi di 2 dispositivi simili ma prodotti da aziende diverse
+    #Es: la pressione di una persona prima e dopo una cura
+    #Es: livello di inquinamento medio in due città
+    #etc...
+        #H_0 : mu_1 = mu_2 (mu_1 - mu_2 = 0)
+        #H_0 : mu_1 != mu_2 test bilaterale a due code
+
+        #H_0 : mu_1 <= mu_2
+        #H_0 : mu_1 > mu_2 test a coda destra
+
+        #H_0 : mu_1 >= mu_2
+        #H_0 : mu_1 < mu_2 test a coda sinistra
+
+    #Statistica di test
+         #Condizioni per l'utilizzo del test (t-test): 
+            #Se le due taglie n_1 e n_2 dei campioni, non necessariamente uguali, n>= 30, allora si può usare il test
+            #indipendentemente dalle distribuzioni
+                #Se n_1 o n_2 < 30, è necessario che le due popolazioni siano distribuite normalmente (o tutte o nessune)
+            #Se entrambe le condizioni non sono rispettate, allora si usano i test parametrici (che noi non vediamo, lì si confrontano le mediane)
+            #(test di tipo wilcoxon)
+            #T = [media X_1 - media X_2 - (mu_1 - mu_2 [spesso 0])] / SE(X_1 - X_2) [errore standard sulla differenza delle media campionarie]
+        #SE viene calcolato in due 2: 
+            #1) le varianze delle popolazioni sono uguali (sigma_1 ^2 = sigma_2 ^2)[var.test{non necessario}]
+            #SP = sqrt([(n_1 - 1)*S_1 + (n_2-1)*S_2]/(n_1 - n_2) )
+            #T = (media X_1 - media X_2) / SP sqrt(1/n_1  + 1/n_2)
+    
+            #2) le varainze delle popolazioni diverse (sigma_1 ^2 != sigma_2 ^2)
+            #SE = sqrt([S_1^2]/n_1 + [S_2^2]/n_2)
+            #T = (media X_1 - media X_2)/sqrt([S_1^2]/n_1 + [S_2^2]/n_2) ~ T (df) [metodo di Welch]
+
+            #3) Caso di default
+            #t.test(campione_1,campione_2,alternative=" ")
+     #Se il dataset è strutturato in modo da avere un unica variabile quantitativa e una variabile qualitativa dicotomica che divide in 2 sottocampioni
+     #la precedente, si può usare anche il comando: 
+        #t.test(var.quantutativa ~ var.qualitativa,alternative=" ")    (~ vuol dire: "diviso in base a ")
+
+#Es: tempi di rottura di un macchinario prodotto in due stabilimenti diversi
+#tempi  stabilimento
+#2.35   1   
+#4.28   2
+#3.18   2
+#etc    1
+#h_0 : mu_tempo_1 = mu_tempo_2
+#h_1 : mu_tempo_1 > mu_tempo_2
+
+#t.test(tempo ~ stabilimento, alternative = "greater")
+#(prima: stabilimento <- as.factor(stabilimento))  per evitare che la consideri qualitativa incece che quantitativa (la rende una factor)
+
+#Esercizi dal Verzani
+#9.32 pag 332
+library("UsingR")
+data("normtemp")
+#H_0 : mu_temp_1 = mu_temp_2
+#H_1 : mu_temp_1 != mu_temp_2 test a due code
+
+length(normtemp$temperature[normtemp$gender==1])
+length(normtemp$temperature[normtemp$gender==2])
+#Hanno la stessa lunghezza e sono sufficientemente grandi per l'uso del t.test
+t.test(normtemp$temperature~normtemp$gender) #p-value = 0.02394
+#L'IC per la differenza tra le media, cioè per mu_1 - mu_2 non contiene lo 0, perciò la differenza è significativa
+#se avesse contenuto lo 0, questo sarebbe un'indicazione a favore del fatto che la differenza tra le medie non sia significativa
+
+
+#9.31
+data("babies")
+length(babies$age)
+length(babies$dage)
+#sono uguali e abbastanza grandi
+#H_0 : mu_age_m >= mu_age_d
+#H_1 : mu_age_m < mu_age_d
+t.test(babies$age,babies$dage, alternative="less") # si rifiuta H_0 in favore di H_1
+#Per verifica se un campione è normale, si può facilmente usare un istogramma
+
+#9.35
+
+library("MASS")
+data("shoes")
+#Importante! : test per due medie per campioni appaiati
+    #(X_1_i , x_2_i) per i da 1 ad n
+    #x_1_1,x_2_1
+    #x_1_n,n_2_n
+    #In questo caso si considerano le differenze: 
+        #D: x_1 - x_2 (di ogni coppia)(differenza)
+        #d_n = x_1_n - x_2_n
+        #mu_i = media della variabile differenza 
+        #media D = 1/n * sum di i da 1 ad n di (x_1_i - x_2_i)
+
+        #mu != 0, mu < 0, mu > 0
+        #NOTARE CHE è DIVERSO
+    #Non si effettua il test sulla differenza tra 2 medie, ma sulla media delle differenze, !!! usare t.test non è UN ERRORE !!! quando i campioni sono appaiati (non indipendenti)
+
+    #t.test(campione_2,campione_2,paired="T",alternative=" ")
+    #Dove entrambi i campioni hanno la stessa taglia, abbastanza grande(>= 30) o se <30 campioni estratti da distribuzioni normali
+
+#
+str(shoes)
+hist(shoes$A) #meh, abbastanza normale
+hist(shoes$B) #meh, anche questo abbastanza normale
+#parametri ergonomici sono spesso estratti da distribuzioni normali, quindi possiamo usare il t.test
+#H_0 : mu_A = mu_B
+#H_! : mu_A != mu_B
+t.test(shoes$A,shoes$B,paired="TRUE")
+#t = -3.3489, df = 9 (gradi di libertà), p-value = 0.008539
+#p-value = 0.008539 < 0.05 rifiutiamo ipotesi nulla
+
+#Si può affermare che ad un opportuno livello di significatività che la misura di A sia minore della misura B in media?
+#H_0: mu_A >= mu_B
+#H_1: mu_A < mu_B coda a sinistra
+t.test(shoes$A,shoes$B,paired="TRUE",alternative="less")
+#t = -3.3489, df = 9, p-value = 0.004269
+#p-value = 0.004269 < 0.05 : 
+        #C'è abbastanza evidenza statistica per sostenere che la media di A sia minore della media di B [rifiutiamo h_0 a favore di h_1]
+
+#FARE ESERCIZI DALLE PAGINE SU MOODLE ASSEGNATE
+
+
+#____________~~~~~~~~~~~~________________________Buono studio e buona fortuna!___________~~~~~~~~~~~~________________________                         # nolint
