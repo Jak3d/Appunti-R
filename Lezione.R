@@ -1021,4 +1021,4 @@ t.test(shoes$A,shoes$B,paired="TRUE",alternative="less")
 #FARE ESERCIZI DALLE PAGINE SU MOODLE ASSEGNATE
 
 
-#____________~~~~~~~~~~~~________________________Buono studio e buona fortuna!___________~~~~~~~~~~~~________________________                         # nolint
+#____________~~~~~~~~~~~~____________Buono studio e buona fortuna!___________~~~~~~~~~~~~____________                                                # nolint
